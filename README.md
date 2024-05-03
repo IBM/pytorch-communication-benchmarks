@@ -63,13 +63,13 @@ and a hostfile, MASTER_ADDR should be the hostname where rank 0 is assigned.  We
 with lines like the ones listed here : 
 
 if [ -z "$OMPI_COMM_WORLD_RANK" ]; then <br />
-  # for MPICH <br />
+  \# for MPICH <br />
   let local_size=$MPI_LOCALNRANKS <br />
   let local_rank=$MPI_LOCALRANKID <br />
   let world_size=$PMI_SIZE <br />
   let world_rank=$PMI_RANK <br />
 else <br />
-  # for OpenMPI <br />
+  \# for OpenMPI <br />
   let local_size=$OMPI_COMM_WORLD_LOCAL_SIZE <br />
   let local_rank=$OMPI_COMM_WORLD_LOCAL_RANK <br />
   let world_size=$OMPI_COMM_WORLD_SIZE <br />
