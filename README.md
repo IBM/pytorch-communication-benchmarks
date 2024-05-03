@@ -87,8 +87,8 @@ exec "$@" <br />
 The MPI environment variables above work with current versions of the most popular MPI implementations.
 The last line of the helper script execs the arguments that follow.  A sample helper script is included.
 
-When using a job scheduler like slurm or LSF, the list of hosts is generally not known in advance, so the
-helper script needs to set MASTER_ADDR at runtime.  For slurm the usual method is : 
+When using a job scheduler like Slurm or LSF, the list of hosts is generally not known in advance, so the
+helper script needs to set MASTER_ADDR at runtime.  For Slurm the usual method is : 
 
 head_node=$(/path/to/scontrol show hostnames $SLURM_JOB_NODELIST | head -n 1) <br />
 export MASTER_ADDR=$head_node <br />
