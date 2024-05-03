@@ -95,9 +95,9 @@ export MASTER_ADDR=$head_node <br />
 
 FOR LSF one can get the host name from $LSF_MCPU_HOSTS : 
 
-head_node=`echo $LSB_MCPU_HOSTS | awk '{print $3}'` <br />
+head_node=\`echo $LSB_MCPU_HOSTS | awk '{print $3}'\` <br />
 or <br />
-head_node=`echo $LSB_MCPU_HOSTS | awk '{print $1}'` <br />
+head_node=\`echo $LSB_MCPU_HOSTS | awk '{print $1}'\` <br />
 export MASTER_ADDR=$head_node <br />
 
 A helper script can be useful for many other purposes, such as setting NCCL environment variables, setting
