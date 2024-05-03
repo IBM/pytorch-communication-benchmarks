@@ -62,6 +62,8 @@ mask that matches the socket affinity for the GPU assigned to each worker.  If y
 and a hostfile, MASTER_ADDR should be the hostname where rank 0 is assigned.  We use helper scripts
 with lines like the ones listed here : 
 
+source /path/to/conda.env <br />
+
 if [ -z "$OMPI_COMM_WORLD_RANK" ]; then <br />
   \# for MPICH <br />
   let local_size=$MPI_LOCALNRANKS <br />
@@ -82,7 +84,10 @@ export WORLD_SIZE=$world_size <br />
 export RANK=$world_rank <br />
 export LOCAL_RANK=$local_rank <br />
 
+exec "$@" <br />
+
 The MPI environment variables above work with current versions of the most popular MPI implementations.
+The last line of the helper script execs the arguments that follow.  A sample helper script is included.
 
 When using a job scheduler like slurm or LSF, the list of hosts is generally not known in advance, so the
 helper script needs to set MASTER_ADDR at runtime.  For slurm the usual method is : 
@@ -99,6 +104,8 @@ export MASTER_ADDR=$head_node <br />
 
 A helper script can be useful for many other purposes, such as setting NCCL environment variables, setting
 process affinity, or flexibly enabling profiling control.
+
+work in progress ...
 
 ## License
 
