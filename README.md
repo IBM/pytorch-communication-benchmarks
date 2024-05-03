@@ -46,10 +46,12 @@ job, one needs to specify the dimensions for tensor and pipeline parallelism :
 
 mpirun -np 512 helper.sh python megatron-allreduce.py -t 4 -p 8 <br />
 
-where the -t option is tensor-parallel and the -p option is for pipeline-parallel.  For the megatron code,
-the world_size = tp_size * dp_size * pp_size.  Communication for tensor-parallelism is very fine-grained, 
-and so that is normally limited to within a node.  The default ordering of ranks is "tensor, data, pipeline"  
+where the -t option is for tensor-parallel and the -p option is for pipeline-parallel.  For the megatron code,
+world_size = tp_size * dp_size * pp_size.  Communication for tensor-parallelism is very fine-grained, 
+so that is normally limited to within a node.  The default ordering of ranks is "tensor, data, pipeline"  
 but the code also supports an alternative "tensor, pipeline, data" ordering, by adding : --order tpd.
+
+Work in progress ...
 
 
 
