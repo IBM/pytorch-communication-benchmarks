@@ -28,7 +28,7 @@ mpirun -np 512 helper.sh python allgather-loop.py <br />
 mpirun -np 512 helper.sh python reduce-scatter-loop.py <br />
 
 where a helper script, helper.sh, is used to set the variables that are needed for the torch.distributed()
-environment : MASTER_ADDRESS, MASTER_PORT, RANK, LOCAL_RANK, WORLD_SIZE.  
+environment : MASTER_ADDR, MASTER_PORT, RANK, LOCAL_RANK, WORLD_SIZE.  
 
 Some AI training frameworks support multiple dimensions of parallelization, and the communication patterns 
 for these frameworks are more complex.  This repository contains a megatron-allreduce.py script that uses
@@ -51,79 +51,55 @@ world_size = tp_size * dp_size * pp_size.  Communication for tensor-parallelism 
 so that is normally limited to within a node.  The default ordering of ranks is "tensor, data, pipeline"  
 but the code also supports an alternative "tensor, pipeline, data" ordering, by adding : --order tpd.
 
-Work in progress ...
+## Launching Jobs
 
+We recommend launching these PyTorch communication benchmarks using the same method that you use for AI 
+training jobs.  Our experience has been that the latency measured for smaller global array dimensions can
+be sensitive to process affinity, and not all launch methods provide sufficient affinity control.  When
+using torchrun, we have found that setting environment variable NCCL_IGNORE_CPU_AFFINITY=1 can help for the
+smaller array dimensions.  This variable lets the NCCL library manage affinity, typically by setting a CPU
+mask that matches the socket affinity for the GPU assigned to each worker.  If you launch jobs with mpirun 
+and a hostfile, MASTER_ADDR should be the hostname where rank 0 is assigned.  We use helper scripts
+with lines like the ones listed here : 
 
+if [ -z "$OMPI_COMM_WORLD_RANK" ]; then <br />
+  # for MPICH <br />
+  let local_size=$MPI_LOCALNRANKS <br />
+  let local_rank=$MPI_LOCALRANKID <br />
+  let world_size=$PMI_SIZE <br />
+  let world_rank=$PMI_RANK <br />
+else <br />
+  # for OpenMPI <br />
+  let local_size=$OMPI_COMM_WORLD_LOCAL_SIZE <br />
+  let local_rank=$OMPI_COMM_WORLD_LOCAL_RANK <br />
+  let world_size=$OMPI_COMM_WORLD_SIZE <br />
+  let world_rank=$OMPI_COMM_WORLD_RANK <br />
+fi <br />
 
+export MASTER_ADDR=yourHost <br />
+export MASTER_PORT=29400 <br />
+export WORLD_SIZE=$world_size <br />
+export RANK=$world_rank <br />
+export LOCAL_RANK=$local_rank <br />
 
-<!-- Not always needed, but a scope helps the user understand in a short sentence like below, why this repo exists -->
-## Scope
+The MPI environment variables above work with current versions of the most popular MPI implementations.
 
-The purpose of this project is to provide a template for new open source repositories.
+When using a job scheduler like slurm or LSF, the list of hosts is generally not known in advance, so the
+helper script needs to set MASTER_ADDR at runtime.  For slurm the usual method is : 
 
-<!-- A more detailed Usage or detailed explanation of the repository here -->
-## Usage
+head_node=$(/path/to/scontrol show hostnames $SLURM_JOB_NODELIST | head -n 1) <br />
+export MASTER_ADDR=$head_node <br />
 
-This repository contains some example best practices for open source repositories:
+FOR LSF one can get the host name from $LSF_MCPU_HOSTS : 
 
-* [LICENSE](LICENSE)
-* [README.md](README.md)
-* [CONTRIBUTING.md](CONTRIBUTING.md)
-* [MAINTAINERS.md](MAINTAINERS.md)
-<!-- A Changelog allows you to track major changes and things that happen, https://github.com/github-changelog-generator/github-changelog-generator can help automate the process -->
-* [CHANGELOG.md](CHANGELOG.md)
+head_node=`echo $LSB_MCPU_HOSTS | awk '{print $3}'` <br />
+or <br />
+head_node=`echo $LSB_MCPU_HOSTS | awk '{print $1}'` <br />
+export MASTER_ADDR=$head_node <br />
 
-> These are optional
-
-<!-- The following are OPTIONAL, but strongly suggested to have in your repository. -->
-* [dco.yml](.github/dco.yml) - This enables DCO bot for you, please take a look https://github.com/probot/dco for more details.
-* [travis.yml](.travis.yml) - This is a example `.travis.yml`, please take a look https://docs.travis-ci.com/user/tutorial/ for more details.
-
-These may be copied into a new or existing project to make it easier for developers not on a project team to collaborate.
-
-<!-- A notes section is useful for anything that isn't covered in the Usage or Scope. Like what we have below. -->
-## Notes
-
-**NOTE: While this boilerplate project uses the Apache 2.0 license, when
-establishing a new repo using this template, please use the
-license that was approved for your project.**
-
-**NOTE: This repository has been configured with the [DCO bot](https://github.com/probot/dco).
-When you set up a new repository that uses the Apache license, you should
-use the DCO to manage contributions. The DCO bot will help enforce that.
-Please contact one of the IBM GH Org stewards.**
-
-<!-- Questions can be useful but optional, this gives you a place to say, "This is how to contact this project maintainers or create PRs -->
-If you have any questions or issues you can create a new [issue here][issues].
-
-Pull requests are very welcome! Make sure your patches are well tested.
-Ideally create a topic branch for every separate change you make. For
-example:
-
-1. Fork the repo
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Added some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request
+A helper script can be useful for many other purposes, such as setting NCCL environment variables, setting
+process affinity, or flexibly enabling profiling control.
 
 ## License
 
-All source files must include a Copyright and License header. The SPDX license header is 
-preferred because it can be easily scanned.
-
 If you would like to see the detailed LICENSE click [here](LICENSE).
-
-```text
-#
-# Copyright IBM Corp. {Year project was created} - {Current Year}
-# SPDX-License-Identifier: Apache-2.0
-#
-```
-## Authors
-
-Optionally, you may include a list of authors, though this is redundant with the built-in
-GitHub list of contributors.
-
-- Author: New OpenSource IBMer <new-opensource-ibmer@ibm.com>
-
-[issues]: https://github.com/IBM/repo-template/issues/new
