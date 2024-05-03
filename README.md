@@ -1,7 +1,14 @@
-<!-- This should be the location of the title of the repository, normally the short name -->
-# repo-template
+# pytorch communication benchmarks
 
-<!-- Build Status, is a great thing to have at the top of your repository, it shows that you take your CI/CD as first class citizens -->
+This repository contains simple benchmarks for the most common collective communication calls that are used in AI training jobs.  
+These include allreduce, allgather, and reduce-scatter operations.  The benchmarks are implemented in python scripts that use 
+native PyTorch calls for the collective communication routines.  This makes the tests portable to a variety of systems using
+any of the backends supported by PyTorch.  It is expected that in most cases users will choose the "nccl" backend, and so that
+is specified in the python scripts, but this can be adjusted if desired.  The benchmarks will use the communication library that is 
+built into your PyTorch distribution, and jobs are launched using your preferred torch.distributed() launch mechanism.  This
+ensures that the benchmarks reflect the performance that can be acheived in your training jobs.  
+
+The main benchmark codes are allreduce-loop.py, allgather-loop.py, and reduce-scatter-loop.py.  
 <!-- [![Build Status](https://travis-ci.org/jjasghar/ibm-cloud-cli.svg?branch=master)](https://travis-ci.org/jjasghar/ibm-cloud-cli) -->
 
 <!-- Not always needed, but a scope helps the user understand in a short sentance like below, why this repo exists -->
