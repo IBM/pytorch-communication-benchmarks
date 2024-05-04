@@ -11,14 +11,14 @@ import time
 import numpy as np
 import argparse
 
-# optional args : -i iterations   and  -s messsage-size (in MBytes)
+# optional args : -i iterations   and  -s array size (in MBytes)
 parser = argparse.ArgumentParser()
 parser.add_argument("-i", "--iterations", type=int, default=5000)
-parset.add_argument("-s", "--msgsize", type=int, default=500)
+parset.add_argument("-s", "--size", type=int, default=500)
 
 args = parser.parse_args()
 maxiter = args.iterations
-nMB = args.msgsize
+nMB = args.size
 
 local_rank = int(os.environ["LOCAL_RANK"])
 rank = int(os.environ["RANK"])

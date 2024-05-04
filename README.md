@@ -103,6 +103,14 @@ export MASTER_ADDR=$head_node <br />
 A helper script can be useful for many other purposes, such as setting NCCL environment variables, setting
 process affinity, or flexibly enabling profiling control.
 
+## Performance Variability
+
+Some communication benchmarks just put timers around a loop that calls the relevant routines back to back.
+That provides an anverage of the individual iteration times, but it is sometimes necessary to dive deeper
+into the issue of performance variability.  The python script allreduce-stats.py is designed for such
+investigations.  The code uses a fixed array dimension in the allreduce call, and records a large number 
+of iterations.  
+
 work in progress ...
 
 ## License
