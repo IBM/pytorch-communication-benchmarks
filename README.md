@@ -100,6 +100,14 @@ or <br />
 head_node=\`echo $LSB_MCPU_HOSTS | awk '{print $1}'\` <br />
 export MASTER_ADDR=$head_node <br />
 
+For Slurm, one might use srun to launch the job instead of mpirun, in which case MPI environment
+variables may not be availble, so one should use lines like these in the helper script :
+
+let world_size=$SLURM_NTASKS <br />
+let world_rank=$SLURM_PROCID <br />
+let local_size=$SLURM_NTASKS_PER_NODE <br />
+let local_rank=$world_rank%$local_size <br />
+
 A helper script can be useful for many other purposes, such as setting NCCL environment variables, setting
 process affinity, or flexibly enabling profiling control.
 
@@ -107,11 +115,13 @@ process affinity, or flexibly enabling profiling control.
 
 Some communication benchmarks just put timers around a loop that calls the relevant routines back to back.
 That provides an anverage of the individual iteration times, but it is sometimes necessary to dive deeper
-into the issue of performance variability.  The python script allreduce-stats.py is designed for such
-investigations.  The code uses a fixed array dimension in the allreduce call, and records a large number 
-of iterations.  
-
-work in progress ...
+into the issue of performance variability.  The python script allreduce-stats.py uses a fixed array dimension 
+in the allreduce call, and records times for a large number of iterations.  The code then gathers up the
+times measured on each rank and writes them to a file "times.txt".  A separate utility, source code analyze.c,
+is used to create a histogram of the timing measurements.  You can build this utility with : gcc analyze.c 
+-o analyze -lm.  It is sometimes useful to plot the times reported by one of the ranks as a time series.  That
+can provide insight into the nature of any disturbances that might result in performance variations.  It is
+recommended to choose an iteration count large enough to collect timing data over a ~10 minute interval.
 
 ## License
 

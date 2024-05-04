@@ -14,7 +14,7 @@ import argparse
 # optional args : -i iterations   and  -s array size (in MBytes)
 parser = argparse.ArgumentParser()
 parser.add_argument("-i", "--iterations", type=int, default=5000)
-parset.add_argument("-s", "--size", type=int, default=500)
+parser.add_argument("-s", "--size", type=int, default=500)
 
 args = parser.parse_args()
 maxiter = args.iterations
