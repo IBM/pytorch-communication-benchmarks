@@ -21,7 +21,7 @@ suited for plotting the results with a log scale for the X-axis.  These three co
 allgather-loop.py, and reduce-scatter-loop.py have a single communicating group, containing all of the 
 torch.distributed() workers.
 
-Job launching is discussed in more detail later, but launches using mpirun, for example, are:
+Launching jobs is discussed in more detail later, but launches using mpirun, for example, are:
 
 mpirun -np 512 helper.sh python allreduce-loop.py <br />
 mpirun -np 512 helper.sh python allgather-loop.py <br />
