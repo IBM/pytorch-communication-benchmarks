@@ -114,7 +114,7 @@ process affinity, or flexibly enabling profiling control.
 ## Performance Variability
 
 Some communication benchmarks just put timers around a loop that calls the relevant routines back to back.
-That provides an anverage of the individual iteration times, but it is sometimes necessary to dive deeper
+That provides an average of the individual iteration times, but it is sometimes necessary to dive deeper
 into the issue of performance variability.  The python script allreduce-stats.py uses a fixed array dimension 
 in the allreduce call, and records times for a large number of iterations.  The code then gathers up the
 times measured on each rank and writes them to a file "times.txt".  A separate utility, source code analyze.c,
