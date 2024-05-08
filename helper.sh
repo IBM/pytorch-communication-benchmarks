@@ -1,6 +1,6 @@
 #!/bin/bash
 #--------------------------------------------------------------------------------
-# syntax : srun ./helper.sh your.exe [args]
+# syntax : srun ./helper.sh python script.py [args]
 #--------------------------------------------------------------------------------
 
 source /path/to/conda.env
