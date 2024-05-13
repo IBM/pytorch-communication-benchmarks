@@ -9,7 +9,6 @@ import torch
 import torch.distributed as dist
 import time
 import argparse
-import subprocess
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-t", "--tensor_parallel", type=int, default=1)
