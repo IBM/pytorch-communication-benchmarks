@@ -49,7 +49,9 @@ mpirun -np 512 helper.sh python megatron-allreduce.py -t 4 -p 8 <br />
 where the -t option is for tensor-parallel and the -p option is for pipeline-parallel.  For the megatron code,
 world_size = tp_size * dp_size * pp_size.  Communication for tensor-parallelism is very fine-grained, 
 so that is normally limited to within a node.  The default ordering of ranks is "tensor, data, pipeline"  
-but the code also supports an alternative "tensor, pipeline, data" ordering, by adding : --order tpd.
+but the code also supports an alternative "tensor, pipeline, data" ordering, by adding : --order tpd.  Starting
+with torch-2.3, PyTorch supports combining tensor parallelism with FSDP.  The main communication pattern in
+this case is covered by the megatron-allreduce code with the pipeline parallel dimension set to one.
 
 ## Launching Jobs
 
