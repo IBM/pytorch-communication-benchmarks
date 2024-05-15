@@ -95,7 +95,7 @@ helper script needs to set MASTER_ADDR at runtime.  For Slurm the usual method i
 head_node=$(/path/to/scontrol show hostnames $SLURM_JOB_NODELIST | head -n 1) <br />
 export MASTER_ADDR=$head_node <br />
 
-FOR LSF one can get the host name from $LSF_MCPU_HOSTS : 
+For LSF one can get the host name from $LSF_MCPU_HOSTS : 
 
 head_node=\`echo $LSB_MCPU_HOSTS | awk '{print $3}'\` <br />
 or <br />
