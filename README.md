@@ -31,27 +31,27 @@ where a helper script, helper.sh, is used to set the variables that are needed f
 environment : MASTER_ADDR, MASTER_PORT, RANK, LOCAL_RANK, WORLD_SIZE.  
 
 Some AI training frameworks support multiple dimensions of parallelization, and the communication patterns 
-for these frameworks are more complex.  This repository contains a megatron-allreduce.py script that uses
-three levels of parallelization, with tensor, pipeline, and data-parallel groups, as in Megatron-LM.  In this
-case one of the main collective communication calls is allreduce within each data-parallel group, and there
-will be many independent and possibly concurrent calls to allreduce for the different data-parallel groups.
+for these frameworks are more complex.  This repository contains python scripts that use three levels of 
+parallelization, with tensor, pipeline, and data-parallel groups, as in Megatron-LM.  In this case the main
+collective communication calls are allreduce, allgather, and reduce-scatter within each data-parallel group, 
+and there will be many independent and possibly concurrent calls for the different data-parallel groups.
 The number of participants in each data-parallel group is the world size divided by the product of the 
 tensor-parallel and pipeline-parallel dimensions.  This can be much smaller than the world size, and that can
 improve scaling by reducing the effect of latency.  Since there are multiple independent communicating groups,
 we add barrier synchronization and take the effective communication time to be the time from when all groups
 start until the last group finishes.  It is also of interest to determine whether each group takes about the
-same time, or if one or more groups is causing a delay.  To check on this, the megatron-allreduce.py code
-has the group leader for each group report separately on the time spent in allreduce calls.  To launch the
+same time, or if one or more groups is causing a delay.  To check on this, the megatron python codes have
+the group leader for each group report separately on the time spent in communication calls.  To launch the
 job, one needs to specify the dimensions for tensor and pipeline parallelism :
 
 mpirun -np 512 helper.sh python megatron-allreduce.py -t 4 -p 8 <br />
 
-where the -t option is for tensor-parallel and the -p option is for pipeline-parallel.  For the megatron code,
+where the -t option is for tensor-parallel and the -p option is for pipeline-parallel.  For the megatron codes,
 world_size = tp_size * dp_size * pp_size.  Communication for tensor-parallelism is very fine-grained, 
 so that is normally limited to within a node.  The default ordering of ranks is "tensor, data, pipeline"  
 but the code also supports an alternative "tensor, pipeline, data" ordering, by adding : --order tpd.  Starting
 with torch-2.3, PyTorch supports combining tensor parallelism with FSDP.  The main communication pattern in
-this case is covered by the megatron-allreduce code with the pipeline parallel dimension set to one.
+this case is covered by the megatron codes with the pipeline parallel dimension set to one.
 
 ## Launching Jobs
 
