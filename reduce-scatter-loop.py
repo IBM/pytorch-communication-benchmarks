@@ -86,3 +86,4 @@ for nMB in [8.0,10.0,12.5,15.0,20.0,31.6,40.0,50.0,64.0,80.0,100.0,125.0,160.0,2
     if rank == 0:
         print("{:7.1f}".format(nMB), "    ", "{:6.1f}".format(avg_bandwidth), "       ", "{:6.1f}".format(max_bandwidth), "        ", "{:6.1f}".format(min_bandwidth), file=sys.stderr)
 
+dist.destroy_process_group()

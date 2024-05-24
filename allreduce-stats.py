@@ -97,3 +97,5 @@ if rank == 0:
     outfile = open("times.txt", "w")
     for i in range(nglobal):
         print(alltimes[i].numpy(), file=outfile)
+
+dist.destroy_process_group()
