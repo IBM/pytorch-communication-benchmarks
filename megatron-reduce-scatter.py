@@ -189,13 +189,17 @@ if world_rank == 0:
 
 
 if world_rank == 0:
-    print("size(MB)   avgbw(GB/sec)   maxbw(GB/sec)   minbw(GB/sec)", file=sys.stderr)
+    print(" size(MB)   tavg(usec)    tmin(usec)    tmax(usec)  avgbw(GB/sec)  maxbw(GB/sec)  minbw(GB/sec)", file=sys.stderr)
 
-for nMB in [8.0,10.0,12.5,15.0,20.0,31.6,40.0,50.0,64.0,80.0,100.0,125.0,160.0,200.0,250.0,316.0,400.0,500.0,640.0,800.0,1000.0,1250.0,1600.0,2000.0,2500.0,3160.0,4000.0,5000.0,6400.0,8000.0, 10000.0]:
+for nMB in [0.10,0.12,0.15,0.20,0.32,0.40,0.50,0.64,0.80,1.00,1.25,1.50,2.00,3.16,4.00,5.00,6.40,8.00,\
+            10.0,12.5,15.0,20.0,31.6,40.0,50.0,64.0,80.0,100.0,125.0,160.0,200.0,250.0,316.0,400.0,500.0,640.0,800.0,\
+            1000.0,1250.0,1600.0,2000.0,2500.0,3160.0,4000.0,5000.0,6400.0,8000.0]:
 
     dist.barrier(group=None)
 
-    if nMB < 512.0:
+    if nMB < 10.0:
+        maxiter = 100*multiplier
+    elif nMB < 512.0:
         maxiter = 20*multiplier
     elif nMB < 2000.0:
         maxiter = 10*multiplier
@@ -238,6 +242,7 @@ for nMB in [8.0,10.0,12.5,15.0,20.0,31.6,40.0,50.0,64.0,80.0,100.0,125.0,160.0,2
     tend = time.perf_counter()
 
     elapsed = tend - tbeg
+    tavg = elapsed / maxiter
 
     del Output
     del Input
@@ -245,12 +250,14 @@ for nMB in [8.0,10.0,12.5,15.0,20.0,31.6,40.0,50.0,64.0,80.0,100.0,125.0,160.0,2
 
     factor = groups_per_node
 
-    avg_bandwidth = factor*4.0e-9*maxiter*nglobal*((group_size - 1)/group_size)/elapsed
-    max_bandwidth = factor*4.0e-9*nglobal*((group_size - 1)/group_size)/tmin
-    min_bandwidth = factor*4.0e-9*nglobal*((group_size - 1)/group_size)/tmax
+    avgbw = factor*4.0e-9*nglobal*((group_size - 1)/group_size)/tavg
+    maxbw = factor*4.0e-9*nglobal*((group_size - 1)/group_size)/tmin
+    minbw = factor*4.0e-9*nglobal*((group_size - 1)/group_size)/tmax
+
 
     if world_rank == 0:
-        print("{:7.1f}".format(nMB), "    ", "{:6.1f}".format(avg_bandwidth), "       ", "{:6.1f}".format(max_bandwidth), "        ", "{:6.1f}".format(min_bandwidth), file=sys.stderr)
+        print("{:8.2f}".format(nMB), "  ", "{:7.1f}".format(tavg*1.0e6), "      ", "{:7.1f}".format(tmin*1.0e6), "      ", "{:7.1f}".format(tmax*1.0e6), \
+              "     ", "{:7.2f}".format(avgbw), "      ", "{:7.2f}".format(maxbw), "      ", "{:7.2f}".format(minbw), file=sys.stderr)
 
     if group_rank == 0:
         print("world_rank ", world_rank, " reports tsum = ", "{:8.5f}".format(tsum), " sec for array size ", "{:6.1f}".format(nMB), file=outfile)
