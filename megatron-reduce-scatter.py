@@ -244,6 +244,8 @@ for nMB in [0.10,0.12,0.15,0.20,0.32,0.40,0.50,0.64,0.80,1.00,1.25,1.50,2.00,3.1
     elapsed = tend - tbeg
     tavg = elapsed / maxiter
 
+    tsum = tsum / maxiter
+
     del Output
     del Input
     torch.cuda.synchronize()
@@ -260,7 +262,7 @@ for nMB in [0.10,0.12,0.15,0.20,0.32,0.40,0.50,0.64,0.80,1.00,1.25,1.50,2.00,3.1
               "     ", "{:7.2f}".format(avgbw), "      ", "{:7.2f}".format(maxbw), "      ", "{:7.2f}".format(minbw), file=sys.stderr)
 
     if group_rank == 0:
-        print("world_rank ", world_rank, " reports tsum = ", "{:8.5f}".format(tsum), " sec for array size ", "{:6.1f}".format(nMB), file=outfile)
+        print("world_rank ", world_rank, " reports avg time = ", "{:8.3f}".format(tsum), " msec for array size ", "{:6.1f}".format(nMB), file=outfile)
         outfile.flush()
 
 if group_rank == 0:
